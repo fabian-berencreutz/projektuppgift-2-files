@@ -5,7 +5,8 @@ import javax.swing.*;
 public class JOptionMenu implements UI {
     @Override
     public String prompt(String message) {
-        return JOptionPane.showInputDialog(message);
+        String input = JOptionPane.showInputDialog(message);
+        return input != null ? input : "";
     }
 
     @Override
@@ -15,11 +16,17 @@ public class JOptionMenu implements UI {
 
     @Override
     public String menu() {
-        return JOptionPane.showInputDialog(null, """
-                Make your choice:
-                1. Add Product
-                2. List All Products
-                3. Show Info About Product
-                4. Exit Application""");
+        String choice = JOptionPane.showInputDialog(
+                null, """
+                        Make your choice:
+                        1. Add Product
+                        2. List All Products
+                        3. Show Info About Product
+                        4. Exit Application""");
+        if (choice == null) {
+            return "4";
+        }
+
+        return choice;
     }
 }
