@@ -3,9 +3,10 @@ package se.iths.fabian.webshop;
 public class Main {
     public static void main(String[] args) {
         UI consoleUi = new ConsoleUi();
+        UI jOptionMenu = new JOptionMenu();
 
-        ProductService productService = new ProductService(consoleUi);
+        ProductManager productManager = new ProductManager(jOptionMenu);
 
-        productService.menuService();
+        productManager.menuService();
     }
 }
