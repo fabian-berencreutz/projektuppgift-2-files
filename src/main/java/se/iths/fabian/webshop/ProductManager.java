@@ -5,6 +5,11 @@ import java.util.InputMismatchException;
 import java.util.List;
 
 public class ProductManager {
+    private static final String ADD_PRODUCT = "1";
+    private static final String LIST_PRODUCT = "2";
+    private static final String SHOW_INFO = "3";
+    private static final String EXIT = "4";
+
     private List<Product> productsList;
     private UI ui;
 
@@ -33,18 +38,15 @@ public class ProductManager {
     }
 
     public void menuService() {
-        ProductManager productManager = new ProductManager(ui);
-
         boolean running = true;
-
         while (running) {
             String choice = ui.menu();
             try {
                 switch (choice) {
-                    case "1" -> addProduct(productManager);
-                    case "2" -> productManager.listProducts();
-                    case "3" -> showInfo(productManager);
-                    case "4" -> {
+                    case ADD_PRODUCT -> addProductMenu(this);
+                    case LIST_PRODUCT -> this.listProducts();
+                    case SHOW_INFO -> showInfo(this);
+                    case EXIT -> {
                         ui.info("Exiting application...");
                         running = false;
                     }
@@ -56,7 +58,7 @@ public class ProductManager {
         }
     }
 
-    public void addProduct(ProductManager productManager) {
+    public void addProductMenu(ProductManager productManager) {
         String choice = ui.prompt("""
                 ---Choose Category---
                 1. Electronics
@@ -64,102 +66,137 @@ public class ProductManager {
                 3. Clothing""");
 
         try {
-
             String articleNumber = ui.prompt("Enter Article Number: ");
-            if (articleNumber.trim().isEmpty()) {
-                ui.info("Article number cannot be empty.");
+            if (!isValidInput(articleNumber, "Article Number")) {
                 return;
             }
-            if (productManager.articleNumberExists(articleNumber)) {
+            if (articleNumberExists(articleNumber)) {
                 ui.info("Article number " + articleNumber + " already exists.");
                 return;
             }
             String title = ui.prompt("Enter Title: ");
-            if (title.trim().isEmpty()) {
-                ui.info("Title cannot be empty.");
+            if (!isValidInput(title, "Title")) {
                 return;
             }
-            double price = Double.parseDouble(ui.prompt("Enter Price: "));
-            if (price < 0) {
-                ui.info("Price cannot be negative.");
+
+            String priceInput = ui.prompt("Enter Price: ");
+            double price;
+            try {
+                price = Double.parseDouble(priceInput);
+                if (!isValidPrice(price)) {
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                ui.info("Invalid input format. Please enter a valid number");
                 return;
             }
+
             String description = ui.prompt("Enter Description: ");
-            if (description.trim().isEmpty()) {
-                ui.info("Description cannot be empty.");
+            if (!isValidInput(description, "Description")) {
                 return;
             }
 
-            switch (choice) {
-                case "1" -> {
-                    productManager.addElectronic(articleNumber, title, price, description);
-                    ui.info("Product {" + title + "} successfully registered" +
-                            " in the electronics category.");
-                }
+            addProductByCategory(choice, articleNumber, title, price, description);
 
-                case "2" -> {
-                    productManager.addFurniture(articleNumber, title, price, description);
-                    ui.info("Product {" + title + "} successfully registered" +
-                            " in the furniture category.");
-                }
-
-                case "3" -> {
-                    productManager.addClothing(articleNumber, title, price, description);
-                    ui.info("Product {" + title + "} successfully registered" +
-                            " in the clothing category.");
-                }
-                default -> ui.info("Invalid category choice, enter a number between 1-3.");
-            }
-        } catch (InputMismatchException e) {
-            ui.info("Invalid input, enter valid number for category and price.");
+        } catch (Exception e) {
+            ui.info("An error occurred while adding the product: " + e.getMessage());
         }
     }
 
+    private void addProductByCategory(String choice, String articleNumber, String title,
+                                      double price, String description) {
+        ProductCategory category = ProductCategory.fromMenuChoice(choice);
+
+        if (category == null) {
+            ui.info("Invalid category choice, enter a number between 1-3");
+            return;
+        }
+
+        Product product = createProductByCategory(category, articleNumber, title, price, description);
+
+        if (product != null) {
+            addProduct(product);
+            ui.info("Product {" + title + "} successfully registered in the " +
+                    category.getDisplayName().toLowerCase() + " category.");
+        }
+    }
+
+    private Product createProductByCategory(ProductCategory category, String articleNumber, String title,
+                                            double price, String description) {
+        return switch (category) {
+            case ELECTRONICS -> new Electronics(articleNumber, title, price, description);
+            case FURNITURE -> new Furniture(articleNumber, title, price, description);
+            case CLOTHING -> new Clothing(articleNumber, title, price, description);
+        };
+    }
+    
     public void showInfo(ProductManager productManager) {
         String articleNumber = ui.prompt("Type in article number for the product: ");
-        productManager.productInfo(articleNumber);
+        if (isValidInput(articleNumber, "Article Number")) {
+            productInfo(articleNumber);
+        }
+    }
+
+    public boolean isValidInput(String input, String fieldName) {
+        if (input == null || input.trim().isEmpty()) {
+            ui.info(fieldName + " cannot be empty");
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean isValidPrice(double price) {
+        if (price < 0) {
+            ui.info("Price cannot be negative");
+            return false;
+        }
+
+        return true;
     }
 
     public void listProducts() {
-        ui.info("---All products---");
-        for (Product p : productsList) {
-            ui.info("{ " + p.getTitle() + " }");
+        if (productsList.isEmpty()) {
+            ui.info("No products available");
+            return;
         }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("---All products---\n");
+
+        for (Product p : productsList) {
+            sb.append("• ").append(p.getTitle())
+                    .append(" (").append(p.category()).append(")")
+                    .append(System.lineSeparator());
+        }
+
+        ui.info(sb.toString());
     }
 
     public void productInfo(String articleNumber) {
-        boolean found = false;
-
-        for (Product p : productsList) {
-            if (p.getArticleNumber().equals(articleNumber)) {
-                ui.info(String.format("""
-                                ---Product information---
-                                Article Number: %s
-                                Title: %s
-                                Price: %s
-                                Description: %s
-                                """,
-                        p.getArticleNumber(),
-                        p.getTitle(),
-                        p.getPrice(),
-                        p.getDescription()));
-                found = true;
-                break;
-            }
-        }
-
-        if (!found) {
-            ui.info("Article was not found.");
-        }
+        productsList.stream()
+                .filter(p -> p.getArticleNumber().equals(articleNumber))
+                .findFirst()
+                .ifPresentOrElse(
+                        product -> ui.info(String.format("""
+                                        ---Product information---
+                                        Article Number: %s
+                                        Title: %s
+                                        Price: %.2f kr
+                                        Description: %s
+                                        Category: %s
+                                        """,
+                                product.getArticleNumber(),
+                                product.getTitle(),
+                                product.getPrice(),
+                                product.getDescription(),
+                                product.category())),
+                        () -> ui.info("Article was not found.")
+                );
     }
 
     public boolean articleNumberExists(String articleNumber) {
-        for (Product p : productsList) {
-            if (p.getArticleNumber().equals(articleNumber)) {
-                return true;
-            }
-        }
-
-        return false;
+        return productsList.stream()
+                .anyMatch(p -> p.getArticleNumber().equals(articleNumber));
     }
 }

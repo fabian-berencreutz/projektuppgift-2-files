@@ -5,7 +5,7 @@ public class Main {
         UI consoleUi = new ConsoleUi();
         UI jOptionMenu = new JOptionMenu();
 
-        ProductManager productManager = new ProductManager(jOptionMenu);
+        ProductManager productManager = new ProductManager(consoleUi);
 
         productManager.menuService();
     }

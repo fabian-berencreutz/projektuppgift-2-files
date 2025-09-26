@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class ConsoleUi implements UI {
 
-    Scanner scanner = new Scanner(System.in);
+    private final Scanner scanner = new Scanner(System.in);
 
     @Override
     public String prompt(String message) {
@@ -28,5 +28,9 @@ public class ConsoleUi implements UI {
                 4. Exit Application""");
 
         return scanner.nextLine();
+    }
+
+    public void close() {
+        scanner.close();
     }
 }
