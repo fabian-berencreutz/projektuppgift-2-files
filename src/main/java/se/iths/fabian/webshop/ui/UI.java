@@ -1,4 +1,4 @@
-package se.iths.fabian.webshop;
+package se.iths.fabian.webshop.ui;
 
 public interface UI {
     public String prompt(String message);

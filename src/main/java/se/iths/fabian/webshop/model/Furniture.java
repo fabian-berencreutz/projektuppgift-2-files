@@ -1,4 +1,4 @@
-package se.iths.fabian.webshop;
+package se.iths.fabian.webshop.model;
 
 public class Furniture extends Product {
 

@@ -1,12 +1,21 @@
 package se.iths.fabian.webshop;
 
+import se.iths.fabian.webshop.controller.ProductController;
+import se.iths.fabian.webshop.repository.ProductRepository;
+import se.iths.fabian.webshop.service.ProductService;
+import se.iths.fabian.webshop.ui.ConsoleUi;
+import se.iths.fabian.webshop.ui.JOptionMenu;
+import se.iths.fabian.webshop.ui.UI;
+
 public class Main {
     public static void main(String[] args) {
         UI consoleUi = new ConsoleUi();
         UI jOptionMenu = new JOptionMenu();
 
-        ProductManager productManager = new ProductManager(consoleUi);
+        ProductRepository repository = new ProductRepository();
+        ProductService service = new ProductService(repository);
+        ProductController controller = new ProductController(consoleUi, service);
 
-        productManager.menuService();
+        controller.start();
     }
 }

@@ -1,4 +1,4 @@
-package se.iths.fabian.webshop;
+package se.iths.fabian.webshop.model;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = Electronics.class, name = "electronics"),
         @JsonSubTypes.Type(value = Furniture.class, name = "furniture"),
-        @JsonSubTypes.Type(value = Clothing.class, name = "clothing"),
+        @JsonSubTypes.Type(value = Clothing.class, name = "clothing")
 })
 
 public abstract class Product {
