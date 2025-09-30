@@ -1,5 +1,19 @@
 package se.iths.fabian.webshop;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "type"
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = Electronics.class, name = "electronics"),
+        @JsonSubTypes.Type(value = Furniture.class, name = "furniture"),
+        @JsonSubTypes.Type(value = Clothing.class, name = "clothing"),
+})
+
 public abstract class Product {
     private String articleNumber;
     private String title;
@@ -12,6 +26,8 @@ public abstract class Product {
         this.price = price;
         this.description = description;
     }
+
+    public Product() {}
 
     public String getArticleNumber() {
         return articleNumber;

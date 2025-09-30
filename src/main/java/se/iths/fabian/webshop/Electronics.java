@@ -6,6 +6,10 @@ public class Electronics extends Product {
         super(articleNumber, title, price, description);
     }
 
+    public Electronics() {
+        super();
+    }
+
     @Override
     public String category() {
         return "Electronics";

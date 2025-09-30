@@ -6,6 +6,10 @@ public class Clothing extends Product {
         super(articleNumber, title, price, description);
     }
 
+    public Clothing() {
+        super();
+    }
+
     @Override
     public String category() {
         return "Clothing";

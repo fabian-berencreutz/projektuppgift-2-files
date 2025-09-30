@@ -1,5 +1,10 @@
 package se.iths.fabian.webshop;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -9,13 +14,17 @@ public class ProductManager {
     private static final String LIST_PRODUCT = "2";
     private static final String SHOW_INFO = "3";
     private static final String EXIT = "4";
+    private static final String PRODUCTS_FILE = "./products.json";
 
     private List<Product> productsList;
     private UI ui;
+    private ObjectMapper objectMapper;
 
     public ProductManager(UI ui) {
         this.ui = ui;
+        this.objectMapper = new ObjectMapper();
         productsList = new ArrayList<>();
+        loadProductsFromFile();
     }
 
     private void addProduct(Product product) {
@@ -48,6 +57,7 @@ public class ProductManager {
                     case SHOW_INFO -> showInfo(this);
                     case EXIT -> {
                         ui.info("Exiting application...");
+                        saveProductsToFile();
                         running = false;
                     }
                     default -> ui.info("Invalid input, enter a number between 1-4");
@@ -198,5 +208,43 @@ public class ProductManager {
     public boolean articleNumberExists(String articleNumber) {
         return productsList.stream()
                 .anyMatch(p -> p.getArticleNumber().equals(articleNumber));
+    }
+
+    private void loadProductsFromFile() {
+        File file = new File(PRODUCTS_FILE);
+        System.out.println("---Loading---");
+        System.out.println("Absolute path: " + file.getAbsolutePath());
+        System.out.println("File exists: " + file.exists());
+
+        if (!file.exists()) {
+            ui.info("No existing product file found. Starting with empty product list.");
+            return;
+        }
+
+        try {
+            CollectionType listType = objectMapper.getTypeFactory()
+                    .constructCollectionType(List.class, Product.class);
+            List<Product> loadedProducts = objectMapper.readValue(file, listType);
+            productsList.addAll(loadedProducts);
+            ui.info("Successfully loaded " + loadedProducts.size() + " products from file.");
+        } catch (IOException e) {
+            ui.info("Error loading products from file: " + e.getMessage());
+            ui.info("Starting with empty list.");
+        }
+    }
+
+    private void saveProductsToFile() {
+        File file = new File(PRODUCTS_FILE);
+        System.out.println("---Saving---");
+        System.out.println("Absolut path: " + file.getAbsolutePath());
+        System.out.println("Products to save: " + productsList.size());
+
+        try {
+            objectMapper.writerWithDefaultPrettyPrinter()
+                    .writeValue(new File(PRODUCTS_FILE), productsList);
+            ui.info("Successfully saved " + productsList.size() + " products to file.");
+        } catch (IOException e) {
+            ui.info("Error saving products to file: " + e.getMessage());
+        }
     }
 }

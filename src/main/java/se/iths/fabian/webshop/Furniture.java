@@ -6,6 +6,10 @@ public class Furniture extends Product {
         super(articleNumber, title, price, description);
     }
 
+    public Furniture() {
+        super();
+    }
+
     @Override
     public String category() {
         return "Furniture";
