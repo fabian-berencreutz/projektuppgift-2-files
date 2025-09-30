@@ -1,8 +1,12 @@
 package se.iths.fabian.webshop.repository;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import se.iths.fabian.webshop.model.Product;
+import se.iths.fabian.webshop.ui.UI;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +46,9 @@ public class ProductRepository {
 
     public void saveToFile() {
         try {
-            objectMapper.writerWithDefaultPrettyPrinter()
+            objectMapper.writerFor(new TypeReference<java.util.List<se.iths.fabian.webshop.model.Product>>() {
+            })
+                    .withDefaultPrettyPrinter()
                     .writeValue(new File(PRODUCTS_FILE), products);
             System.out.println("Successfully saved " + products.size() + " products to file.");
         } catch (IOException e) {

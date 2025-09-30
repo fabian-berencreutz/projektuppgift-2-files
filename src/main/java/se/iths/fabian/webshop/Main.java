@@ -14,7 +14,7 @@ public class Main {
 
         ProductRepository repository = new ProductRepository();
         ProductService service = new ProductService(repository);
-        ProductController controller = new ProductController(consoleUi, service);
+        ProductController controller = new ProductController(jOptionMenu, service);
 
         controller.start();
     }
