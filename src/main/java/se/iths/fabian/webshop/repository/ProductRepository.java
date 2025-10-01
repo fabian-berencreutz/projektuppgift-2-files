@@ -46,7 +46,7 @@ public class ProductRepository {
 
     public void saveToFile() {
         try {
-            objectMapper.writerFor(new TypeReference<java.util.List<se.iths.fabian.webshop.model.Product>>() {
+            objectMapper.writerFor(new TypeReference<List<Product>>() {
             })
                     .withDefaultPrettyPrinter()
                     .writeValue(new File(PRODUCTS_FILE), products);
