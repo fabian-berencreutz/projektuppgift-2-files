@@ -1,0 +1,31 @@
+[ {
+  "type" : "electronics",
+  "articleNumber" : "1",
+  "title" : "dator",
+  "price" : 123.0,
+  "description" : "asd"
+}, {
+  "type" : "furniture",
+  "articleNumber" : "2",
+  "title" : "soffa",
+  "price" : 23.0,
+  "description" : "brun"
+}, {
+  "type" : "clothing",
+  "articleNumber" : "3",
+  "title" : "tröja",
+  "price" : 123.0,
+  "description" : "asd"
+}, {
+  "type" : "electronics",
+  "articleNumber" : "5",
+  "title" : "tv",
+  "price" : 1000.0,
+  "description" : "asadasd"
+}, {
+  "type" : "electronics",
+  "articleNumber" : "6",
+  "title" : "tangentbord",
+  "price" : 200.0,
+  "description" : "asd"
+} ]

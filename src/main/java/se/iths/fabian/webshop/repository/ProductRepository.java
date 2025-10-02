@@ -2,11 +2,8 @@ package se.iths.fabian.webshop.repository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
-import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import se.iths.fabian.webshop.model.Product;
-import se.iths.fabian.webshop.ui.UI;
 
 import java.io.File;
 import java.io.IOException;
